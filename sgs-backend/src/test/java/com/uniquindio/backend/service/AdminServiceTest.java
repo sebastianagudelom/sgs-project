@@ -80,6 +80,7 @@ class AdminServiceTest {
     private Pedido pedidoConTotal(String total) {
         return Pedido.builder()
                 .total(new BigDecimal(total))
+                .estado(com.uniquindio.backend.model.EstadoPedido.PAGADO)
                 .build();
     }
 }
