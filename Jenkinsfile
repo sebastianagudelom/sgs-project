@@ -1,10 +1,8 @@
 pipeline {
   agent any
 
-  environment {
-    DEPLOY_IP   = '35.225.120.34'
-    DEPLOY_USER = 'sebastianagudelomendez'
-  }
+  // Jenkins corre en la misma VM que el servidor de producción.
+  // Deploy se hace localmente con sudo, sin SSH.
 
   options {
     timeout(time: 30, unit: 'MINUTES')
@@ -52,9 +50,7 @@ pipeline {
     // que se está probando). Para revertir, basta correr el job en un commit anterior.
     stage('Deploy') {
       steps {
-        sshagent(credentials: ['gcp-ssh-key']) {
-          sh "bash deploy/deploy-jenkins.sh ${DEPLOY_IP} ${DEPLOY_USER}"
-        }
+        sh 'bash deploy/deploy-jenkins.sh'
       }
     }
 
