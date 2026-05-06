@@ -1,0 +1,88 @@
+<section class="reviews-section">
+  <div class="reviews-header">
+    <div>
+      <h2>Reseñas</h2>
+      <div class="reviews-summary">
+        <span class="summary-score">{{ resumen.promedio | number:'1.1-1' }}</span>
+        <span class="summary-stars">
+          @for (star of stars; track star) {
+            <span [class.filled]="star <= resumen.promedio">&#9733;</span>
+          }
+        </span>
+        <span class="summary-count">{{ resumen.total }} opiniones</span>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  }
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="reviews-loading">
+      <span class="spinner-lg"></span>
+    </div>
+  } @else {
+    @if (puedeMostrarFormulario()) {
+      <div class="review-form">
+        <h3>{{ miEstado?.miResena ? 'Actualizar mi reseña' : 'Escribir reseña' }}</h3>
+        <div class="rating-input" aria-label="Calificacion">
+          @for (star of stars; track star) {
+            <button
+              type="button"
+              class="star-button"
+              [class.active]="star <= (hoverCalificacion || calificacion)"
+              (mouseenter)="hoverCalificacion = star"
+              (mouseleave)="hoverCalificacion = 0"
+              (click)="seleccionarCalificacion(star)"
+            >
+              &#9733;
+            </button>
+          }
+        </div>
+        <textarea
+          [(ngModel)]="comentario"
+          rows="4"
+          maxlength="1000"
+          placeholder="Comparte tu experiencia con este producto"
+        ></textarea>
+        <div class="review-form-footer">
+          <span>{{ comentario.length }}/1000</span>
+          <button class="btn btn-primary" (click)="guardarResena()" [disabled]="saving">
+            {{ saving ? 'Guardando...' : (miEstado?.miResena ? 'Actualizar' : 'Publicar') }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      @if (mensajeRestriccion()) {
+        <div class="review-restriction">{{ mensajeRestriccion() }}</div>
+      }
+    }
+
+    @if (resenas.length === 0) {
+      <p class="empty-reviews">Este producto todavia no tiene resenas.</p>
+    } @else {
+      <div class="reviews-list">
+        @for (resena of resenas; track resena.id) {
+          <article class="review-item">
+            <header>
+              <div>
+                <strong>{{ resena.usuarioNombre }}</strong>
+                <span>{{ formatFecha(resena.fechaCreacion) }}</span>
+              </div>
+              <div class="review-stars">
+                @for (star of stars; track star) {
+                  <span [class.filled]="star <= resena.calificacion">&#9733;</span>
+                }
+              </div>
+            </header>
+            <p>{{ resena.comentario }}</p>
+          </article>
+        }
+      </div>
+    }
+  }
+</section>

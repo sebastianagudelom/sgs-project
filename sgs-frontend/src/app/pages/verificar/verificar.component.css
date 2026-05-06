@@ -1,0 +1,23 @@
+.email-highlight {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.code-input {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.5rem;
+  font-weight: 700;
+}
+
+.resend-section {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.resend-section p {
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}

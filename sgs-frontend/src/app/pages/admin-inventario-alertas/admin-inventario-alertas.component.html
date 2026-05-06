@@ -1,0 +1,68 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Alertas de Inventario</h2>
+      <p>{{ activas }} activas · {{ leidas }} leidas</p>
+    </div>
+    <button class="btn btn-primary" (click)="verificarInventario()" [disabled]="checking">
+      {{ checking ? 'Verificando...' : 'Verificar stock' }}
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  }
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner-lg"></div>
+      <p>Cargando alertas...</p>
+    </div>
+  } @else if (alertas.length === 0) {
+    <div class="empty-state">
+      <p>No hay productos por debajo del umbral de inventario.</p>
+    </div>
+  } @else {
+    <div class="alerts-list" data-cy="alerts-list">
+      @for (alerta of alertas; track alerta.id) {
+        <article class="alert-card" [class.alert-read]="alerta.estado === 'LEIDA'" data-cy="alert-card">
+          <div class="product-thumb">
+            @if (alerta.productoImagenUrl) {
+              <img [src]="alerta.productoImagenUrl" [alt]="alerta.productoNombre" />
+            } @else {
+              <span>#{{ alerta.productoId }}</span>
+            }
+          </div>
+
+          <div class="alert-info">
+            <div class="alert-title">
+              <h3>{{ alerta.productoNombre }}</h3>
+              <span class="status" [class.status-read]="alerta.estado === 'LEIDA'">
+                {{ getEstadoLabel(alerta.estado) }}
+              </span>
+            </div>
+            <p>
+              Stock actual <strong>{{ alerta.stockActual }}</strong>,
+              umbral <strong>{{ alerta.umbral }}</strong>
+            </p>
+            <small>Creada: {{ formatFecha(alerta.fechaCreacion) }}</small>
+          </div>
+
+          <div class="alert-actions">
+            <a class="btn btn-outline btn-sm" [routerLink]="['/productos/editar', alerta.productoId]">
+              Ajustar stock
+            </a>
+            @if (alerta.estado === 'ACTIVA') {
+              <button class="btn btn-outline btn-sm" (click)="marcarLeida(alerta)">
+                Marcar leida
+              </button>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

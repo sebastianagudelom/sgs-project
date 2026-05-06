@@ -1,0 +1,58 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>Verificar Cuenta</h1>
+      <p>Hemos enviado un código de 6 dígitos a:</p>
+      <p class="email-highlight">{{ email }}</p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-error">{{ errorMessage }}</div>
+    }
+
+    @if (successMessage) {
+      <div class="alert alert-success">{{ successMessage }}</div>
+    }
+
+    <form [formGroup]="verificarForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="codigo">Código de verificación</label>
+        <input
+          type="text"
+          id="codigo"
+          formControlName="codigo"
+          placeholder="000000"
+          maxlength="6"
+          class="code-input"
+          [class.input-error]="f['codigo'].touched && f['codigo'].invalid"
+        />
+        @if (f['codigo'].touched && f['codigo'].errors) {
+          <small class="error-text">Ingresa el código de 6 dígitos</small>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        @if (loading) {
+          <span class="spinner"></span> Verificando...
+        } @else {
+          Verificar Cuenta
+        }
+      </button>
+    </form>
+
+    <div class="resend-section">
+      <p>¿No recibiste el código?</p>
+      <button class="btn btn-outline" (click)="reenviarCodigo()" [disabled]="resending">
+        @if (resending) {
+          Reenviando...
+        } @else {
+          Reenviar Código
+        }
+      </button>
+    </div>
+
+    <p class="auth-footer">
+      <a routerLink="/login">Volver al inicio de sesión</a>
+    </p>
+  </div>
+</div>

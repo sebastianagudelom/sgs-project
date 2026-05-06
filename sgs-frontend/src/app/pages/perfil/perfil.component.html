@@ -1,0 +1,147 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Mi Perfil</h2>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  }
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner-lg"></div>
+      <p>Cargando perfil...</p>
+    </div>
+  } @else {
+    <!-- Datos personales -->
+    <div class="section-card">
+      <h3>Datos personales</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nombre">Nombre <span class="required">*</span></label>
+          <input id="nombre" type="text" [(ngModel)]="nombre" maxlength="50" required />
+        </div>
+        <div class="form-group">
+          <label for="apellido">Apellido <span class="required">*</span></label>
+          <input id="apellido" type="text" [(ngModel)]="apellido" maxlength="50" required />
+        </div>
+        <div class="form-group">
+          <label for="cedula">Cédula <span class="required">*</span></label>
+          <input id="cedula" type="text" [(ngModel)]="cedula" maxlength="20" placeholder="Ej: 1094000000" />
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono <span class="required">*</span></label>
+          <input id="telefono" type="text" [(ngModel)]="telefono" maxlength="15" placeholder="Ej: 3101234567" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [value]="perfil?.email" disabled />
+        <small class="hint">El email no se puede modificar</small>
+      </div>
+      <button class="btn btn-primary" (click)="guardarPerfil()" [disabled]="saving || !nombre || !apellido || !cedula || !telefono">
+        @if (saving) {
+          <span class="spinner-sm"></span> Guardando...
+        } @else {
+          Guardar cambios
+        }
+      </button>
+    </div>
+
+    <!-- Direcciones -->
+    <div class="section-card">
+      <div class="section-header">
+        <h3>Mis Direcciones</h3>
+        <button class="btn btn-outline-sm" (click)="abrirFormDireccion()" [disabled]="mostrarFormDireccion">
+          + Agregar dirección
+        </button>
+      </div>
+
+      @if (mostrarFormDireccion) {
+        <div class="dir-form">
+          <h4>{{ editandoDireccionId ? 'Editar dirección' : 'Nueva dirección' }}</h4>
+          <div class="form-group">
+            <label for="dirNombre">Nombre <span class="required">*</span></label>
+            <input id="dirNombre" type="text" [(ngModel)]="dirNombre" maxlength="50" placeholder="Ej: Mi casa, Trabajo, Casa de mi novia..." />
+          </div>
+          <app-address-map
+            [(direccion)]="dirDireccion"
+            [(latitud)]="dirLatitud"
+            [(longitud)]="dirLongitud"
+          ></app-address-map>
+          <div class="form-check">
+            <label>
+              <input type="checkbox" [(ngModel)]="dirPredeterminada" />
+              Marcar como dirección predeterminada
+            </label>
+          </div>
+          <div class="dir-form-actions">
+            <button class="btn btn-primary-sm" (click)="guardarDireccion()" [disabled]="savingDir || !dirNombre || dirDireccion.length < 10">
+              @if (savingDir) {
+                Guardando...
+              } @else {
+                {{ editandoDireccionId ? 'Actualizar' : 'Agregar' }}
+              }
+            </button>
+            <button class="btn btn-outline-sm" (click)="cancelarFormDireccion()">Cancelar</button>
+          </div>
+        </div>
+      }
+
+      @if (direcciones.length === 0 && !mostrarFormDireccion) {
+        <p class="empty-text">No tienes direcciones guardadas. Agrega una para agilizar tus pedidos.</p>
+      } @else {
+        <div class="dir-lista">
+          @for (dir of direcciones; track dir.id) {
+            <div class="dir-card" [class.dir-predeterminada]="dir.predeterminada">
+              <div class="dir-info">
+                <div class="dir-nombre">
+                  {{ dir.nombre }}
+                  @if (dir.predeterminada) {
+                    <span class="badge-default">Predeterminada</span>
+                  }
+                </div>
+                <div class="dir-texto">{{ dir.direccion }}</div>
+                @if (dir.latitud !== null && dir.longitud !== null) {
+                  <div class="dir-coords">Lat {{ dir.latitud }} · Lng {{ dir.longitud }}</div>
+                }
+              </div>
+              <div class="dir-acciones">
+                @if (!dir.predeterminada) {
+                  <button class="btn-icon" title="Marcar como predeterminada" (click)="marcarPredeterminada(dir.id)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </button>
+                }
+                <button class="btn-icon" title="Editar" (click)="editarDireccion(dir)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                </button>
+                <button class="btn-icon btn-icon-danger" title="Eliminar" (click)="eliminarDireccion(dir.id)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (mostrarModalEliminar) {
+  <div class="modal-overlay" (click)="cancelarEliminar()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+      </div>
+      <h3 class="modal-title">Eliminar dirección</h3>
+      <p class="modal-message">¿Estás seguro de que deseas eliminar esta dirección? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="btn btn-modal-cancel" (click)="cancelarEliminar()">Cancelar</button>
+        <button class="btn btn-modal-delete" (click)="confirmarEliminar()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+}

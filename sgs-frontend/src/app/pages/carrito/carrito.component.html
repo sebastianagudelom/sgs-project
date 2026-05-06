@@ -1,0 +1,157 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      Mi Carrito
+    </h2>
+    @if (items.length > 0) {
+      <span class="items-count">{{ carritoService.totalItems }} artículos</span>
+    }
+  </div>
+
+  @if (pedidoPendiente) {
+    <div class="alert alert-warning">
+      <strong>Tienes un pago pendiente</strong> (Pedido #{{ pedidoPendiente.id }}).
+      Si ya completaste el pago, espera un momento y recarga la página.
+      Si no vas a pagar, cancela el pedido para liberar el stock.
+      <div class="pending-actions">
+        <a routerLink="/mis-pedidos" class="btn-link">Ver mis pedidos</a>
+        <button class="btn-cancel-pending" (click)="cancelarPedidoPendiente()" [disabled]="cancelandoPendiente">
+          {{ cancelandoPendiente ? 'Cancelando...' : 'Cancelar pedido pendiente' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  }
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
+  @if (items.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      </div>
+      <h3>Tu carrito está vacío</h3>
+      <p>Agrega productos desde nuestra tienda</p>
+      <a routerLink="/productos" class="btn btn-primary">Explorar productos</a>
+    </div>
+  } @else {
+    <div class="carrito-layout">
+      <div class="carrito-items" data-cy="carrito-items">
+        @for (item of items; track item.productoId) {
+          <div class="carrito-item" data-cy="carrito-item">
+            <div class="item-imagen">
+              @if (item.imagenUrl) {
+                <img [src]="item.imagenUrl" [alt]="item.nombre" />
+              } @else {
+                <div class="no-image">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                </div>
+              }
+            </div>
+            <div class="item-info">
+              <h3>{{ item.nombre }}</h3>
+              <p class="item-precio-unit">{{ formatPrecio(item.precio) }} / und</p>
+            </div>
+            <div class="item-cantidad">
+              <div class="qty-control">
+                <button class="qty-btn" (click)="cambiarCantidad(item, -1)" [disabled]="item.cantidad <= 1">−</button>
+                <span class="qty-num">{{ item.cantidad }}</span>
+                <button class="qty-btn" (click)="cambiarCantidad(item, 1)" [disabled]="item.cantidad >= item.stock">+</button>
+              </div>
+            </div>
+            <div class="item-subtotal">
+              {{ formatPrecio(item.precio * item.cantidad) }}
+            </div>
+            <button class="btn-remove" (click)="eliminarItem(item.productoId)" title="Eliminar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="carrito-resumen">
+        <h3>Resumen del pedido</h3>
+        <div class="resumen-linea">
+          <span>Productos ({{ carritoService.totalItems }})</span>
+          <span>{{ formatPrecio(carritoService.totalPrecio) }}</span>
+        </div>
+        <div class="resumen-linea">
+          <span>Envío</span>
+          <span class="envio-gratis">Gratis</span>
+        </div>
+        <div class="resumen-divider"></div>
+        <div class="resumen-total">
+          <span>Total</span>
+          <span>{{ formatPrecio(carritoService.totalPrecio) }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="direccion">Dirección de envío <span class="required">*</span></label>
+
+          @if (direccionesGuardadas.length > 0) {
+            <div class="direcciones-guardadas">
+              @for (dir of direccionesGuardadas; track dir.id) {
+                <button
+                  class="dir-option"
+                  [class.dir-option-active]="direccionSeleccionadaId === dir.id && !usarDireccionPersonalizada"
+                  (click)="seleccionarDireccion(dir.id)"
+                >
+                  <span class="dir-option-nombre">{{ dir.nombre }}</span>
+                  <span class="dir-option-texto">{{ dir.direccion }}</span>
+                  @if (dir.predeterminada) {
+                    <span class="dir-badge">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </span>
+                  }
+                </button>
+              }
+              <button
+                class="dir-option dir-option-otra"
+                [class.dir-option-active]="usarDireccionPersonalizada"
+                (click)="usarOtraDireccion()"
+              >
+                <span class="dir-option-nombre">Otra dirección</span>
+                <span class="dir-option-texto">Escribir una dirección diferente</span>
+              </button>
+            </div>
+          }
+
+          @if (direccionesGuardadas.length === 0 || usarDireccionPersonalizada) {
+            <textarea
+              id="direccion"
+              [(ngModel)]="direccionEnvio"
+              placeholder="Ej: Cra 15 #10-20, Armenia, Quindío"
+              rows="2"
+              maxlength="500"
+              required
+            ></textarea>
+            <small class="char-count">{{ direccionEnvio.length }}/500</small>
+          }
+        </div>
+
+        <button
+          class="btn-checkout"
+          (click)="realizarPedido()"
+          [disabled]="loading || direccionEnvio.trim().length < 10 || !!pedidoPendiente"
+          data-cy="btn-checkout"
+        >
+          @if (loading) {
+            <span class="spinner"></span> Procesando...
+          } @else {
+            Pagar con Mercado Pago
+          }
+        </button>
+
+        <div class="secure-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Pago seguro con Mercado Pago
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,150 @@
+<div class="form-page">
+  <div class="form-card">
+    <h2>{{ editando ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
+
+    @if (errorMessage) {
+      <div class="alert alert-error">{{ errorMessage }}</div>
+    }
+
+    <form [formGroup]="productoForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nombre">Nombre del producto</label>
+        <input
+          type="text"
+          id="nombre"
+          formControlName="nombre"
+          placeholder="Ej: Leche entera 1L"
+          [class.input-error]="f['nombre'].touched && f['nombre'].invalid"
+        />
+        @if (f['nombre'].touched && f['nombre'].errors) {
+          <small class="error-text">
+            @if (f['nombre'].errors['required']) { El nombre es obligatorio }
+            @else if (f['nombre'].errors['minlength']) { Mínimo 2 caracteres }
+          </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea
+          id="descripcion"
+          formControlName="descripcion"
+          placeholder="Descripción breve del producto"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="precio">Precio (COP)</label>
+          <input
+            type="number"
+            id="precio"
+            formControlName="precio"
+            placeholder="0"
+            [class.input-error]="f['precio'].touched && f['precio'].invalid"
+          />
+          @if (f['precio'].touched && f['precio'].errors) {
+            <small class="error-text">
+              @if (f['precio'].errors['required']) { El precio es obligatorio }
+              @else if (f['precio'].errors['min']) { Debe ser mayor a 0 }
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="stock">Stock</label>
+          <input
+            type="number"
+            id="stock"
+            formControlName="stock"
+            placeholder="0"
+            [class.input-error]="f['stock'].touched && f['stock'].invalid"
+          />
+          @if (f['stock'].touched && f['stock'].errors) {
+            <small class="error-text">
+              @if (f['stock'].errors['required']) { El stock es obligatorio }
+              @else if (f['stock'].errors['min']) { No puede ser negativo }
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="stockMinimo">Umbral de alerta</label>
+          <input
+            type="number"
+            id="stockMinimo"
+            formControlName="stockMinimo"
+            placeholder="5"
+            [class.input-error]="f['stockMinimo'].touched && f['stockMinimo'].invalid"
+          />
+          @if (f['stockMinimo'].touched && f['stockMinimo'].errors) {
+            <small class="error-text">
+              @if (f['stockMinimo'].errors['required']) { El umbral es obligatorio }
+              @else if (f['stockMinimo'].errors['min']) { Debe ser mayor a 0 }
+            </small>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="categoriaId">Categoría</label>
+        <select
+          id="categoriaId"
+          formControlName="categoriaId"
+          [class.input-error]="f['categoriaId'].touched && f['categoriaId'].invalid"
+        >
+          <option [ngValue]="null" disabled>Selecciona una categoría</option>
+          @for (cat of categorias; track cat.id) {
+            <option [ngValue]="cat.id">{{ cat.nombre }}</option>
+          }
+        </select>
+        @if (f['categoriaId'].touched && f['categoriaId'].errors) {
+          <small class="error-text">Selecciona una categoría</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Imagen del producto <span class="required">*</span></label>
+        <div class="imagen-upload-area">
+          @if (imagenPreview) {
+            <div class="imagen-preview-container">
+              <img [src]="imagenPreview" alt="Preview" class="imagen-preview" />
+              <button type="button" class="btn-remove-imagen" (click)="eliminarImagen()">✕</button>
+            </div>
+          } @else {
+            <label for="archivoImagen" class="upload-label">
+              <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span>Haz clic para seleccionar una imagen</span>
+              <small>JPEG, PNG, WebP o GIF (máx. 5 MB)</small>
+            </label>
+          }
+          <input
+            type="file"
+            id="archivoImagen"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            (change)="onArchivoSeleccionado($event)"
+            [style.display]="imagenPreview ? 'none' : 'none'"
+          />
+        </div>
+        @if (subiendoImagen) {
+          <small class="uploading-text"><span class="spinner"></span> Subiendo imagen...</small>
+        }
+        @if (!imagenPreview && !archivoSeleccionado && errorMessage === 'La imagen del producto es obligatoria') {
+          <small class="error-text">Debes seleccionar una imagen</small>
+        }
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/productos" class="btn btn-outline">Cancelar</a>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner"></span> Guardando...
+          } @else {
+            {{ editando ? 'Actualizar' : 'Crear Producto' }}
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

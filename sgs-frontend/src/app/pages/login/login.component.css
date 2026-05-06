@@ -1,0 +1,22 @@
+/* Login styles */
+.auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.brand-icon {
+  font-size: 2rem;
+}
+
+.brand-text {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #00a650;
+}
+
+.brand-highlight {
+  color: #f9a825;
+}

@@ -1,0 +1,165 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Mis Pedidos</h2>
+    <a routerLink="/productos" class="btn btn-outline">Seguir comprando</a>
+  </div>
+
+  @if (pagoExitoso) {
+    <div class="alert alert-success">
+      ¡Pago realizado con éxito! Tu pedido está siendo procesado.
+    </div>
+  }
+
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner-lg"></div>
+      <p>Cargando pedidos...</p>
+    </div>
+  } @else if (pedidos.length === 0) {
+    <div class="empty-state">
+      <p>Aun no has realizado ningun pedido</p>
+      <a routerLink="/productos" class="btn btn-primary">Explorar productos</a>
+    </div>
+  } @else {
+    <div class="pedidos-lista">
+      @for (pedido of pedidos; track pedido.id) {
+        <div class="pedido-card">
+          <div class="pedido-header" (click)="toggleDetalles(pedido.id)">
+            <div class="pedido-info">
+              <span class="pedido-id">Pedido #{{ pedido.id }}</span>
+              <span class="pedido-fecha">{{ formatFecha(pedido.fechaCreacion) }}</span>
+            </div>
+            <div class="pedido-meta">
+              <span class="pedido-estado" [ngClass]="getEstadoClass(pedido.estado)">
+                {{ getEstadoLabel(pedido.estado) }}
+              </span>
+              <span class="pedido-total">{{ formatPrecio(pedido.total) }}</span>
+              <span class="expand-icon">{{ pedidoExpandido === pedido.id ? '▲' : '▼' }}</span>
+            </div>
+          </div>
+
+          @if (pedidoExpandido === pedido.id) {
+            <div class="pedido-detalles">
+              @if (pedido.direccionEnvio) {
+                <p class="direccion"><strong>Dirección:</strong> {{ pedido.direccionEnvio }}</p>
+              }
+              <div class="detalles-lista">
+                @for (det of pedido.detalles; track det.id) {
+                  <div class="detalle-item">
+                    <div class="det-imagen">
+                      @if (det.productoImagenUrl) {
+                        <img [src]="det.productoImagenUrl" [alt]="det.productoNombre" />
+                      } @else {
+                        <div class="no-image">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        </div>
+                      }
+                    </div>
+                    <div class="det-info">
+                      <span class="det-nombre">{{ det.productoNombre }}</span>
+                      <span class="det-qty">{{ det.cantidad }} x {{ formatPrecio(det.precioUnitario) }}</span>
+                    </div>
+                    <span class="det-subtotal">{{ formatPrecio(det.subtotal) }}</span>
+                  </div>
+                }
+              </div>
+              @if (puedeVerFactura(pedido.estado)) {
+                <div class="factura-btn-container">
+                  <button class="btn-factura" (click)="verFactura(pedido.id)" [disabled]="cargandoFactura">
+                    Ver Factura
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Modal de factura -->
+@if (mostrarFactura && facturaActual) {
+  <div class="factura-overlay" (click)="cerrarFactura()">
+    <div class="factura-modal" (click)="$event.stopPropagation()">
+      <div class="factura-header">
+        <div class="factura-titulo">
+          <h3>Factura de compra</h3>
+          <span class="factura-id">Pedido #{{ facturaActual.pedidoId }}</span>
+        </div>
+        <button class="factura-close" (click)="cerrarFactura()">✕</button>
+      </div>
+
+      <div class="factura-body">
+        <div class="factura-info-grid">
+          <div>
+            <strong>SGS Market</strong><br />
+            NIT: 900.000.000-0<br />
+            Armenia, Quindío
+          </div>
+          <div class="factura-info-right">
+            <strong>Fecha:</strong> {{ formatFecha(facturaActual.fechaCreacion) }}<br />
+            @if (facturaActual.mercadoPagoPaymentId) {
+              <strong>Ref. Pago:</strong> {{ facturaActual.mercadoPagoPaymentId }}
+            }
+          </div>
+        </div>
+
+        <div class="factura-divider"></div>
+
+        <div class="factura-cliente">
+          <strong>Cliente:</strong> {{ facturaActual.clienteNombre }}<br />
+          <strong>Email:</strong> {{ facturaActual.clienteEmail }}<br />
+          @if (facturaActual.clienteCedula) {
+            <strong>Cédula:</strong> {{ facturaActual.clienteCedula }}<br />
+          }
+          @if (facturaActual.clienteTelefono) {
+            <strong>Teléfono:</strong> {{ facturaActual.clienteTelefono }}<br />
+          }
+          @if (facturaActual.direccionEnvio) {
+            <strong>Dirección:</strong> {{ facturaActual.direccionEnvio }}
+          }
+        </div>
+
+        <div class="factura-divider"></div>
+
+        <table class="factura-tabla">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cant.</th>
+              <th>P. Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (det of facturaActual.detalles; track det.id) {
+              <tr>
+                <td>{{ det.productoNombre }}</td>
+                <td class="text-center">{{ det.cantidad }}</td>
+                <td class="text-right">{{ formatPrecio(det.precioUnitario) }}</td>
+                <td class="text-right">{{ formatPrecio(det.subtotal) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <div class="factura-divider"></div>
+
+        <div class="factura-total">
+          <span>Total</span>
+          <span>{{ formatPrecio(facturaActual.total) }}</span>
+        </div>
+
+        <div class="factura-estado">
+          Estado: <span class="pedido-estado" [ngClass]="getEstadoClass(facturaActual.estado)">{{ getEstadoLabel(facturaActual.estado) }}</span>
+        </div>
+      </div>
+
+      <div class="factura-footer">
+        <button class="btn-print" (click)="imprimirFactura()">Imprimir</button>
+        <button class="btn-cerrar" (click)="cerrarFactura()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

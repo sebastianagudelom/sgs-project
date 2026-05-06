@@ -1,0 +1,138 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">
+        <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+        <span class="brand-text">SGS<span class="brand-highlight">Market</span></span>
+      </div>
+      <p>Crea tu cuenta</p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-error">{{ errorMessage }}</div>
+    }
+
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input
+            type="text"
+            id="nombre"
+            formControlName="nombre"
+            placeholder="Tu nombre"
+            [class.input-error]="f['nombre'].touched && f['nombre'].invalid"
+          />
+          @if (f['nombre'].touched && f['nombre'].errors) {
+            <small class="error-text">
+              @if (f['nombre'].errors['required']) { El nombre es obligatorio }
+              @else if (f['nombre'].errors['minlength']) { Mínimo 2 caracteres }
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="apellido">Apellido</label>
+          <input
+            type="text"
+            id="apellido"
+            formControlName="apellido"
+            placeholder="Tu apellido"
+            [class.input-error]="f['apellido'].touched && f['apellido'].invalid"
+          />
+          @if (f['apellido'].touched && f['apellido'].errors) {
+            <small class="error-text">
+              @if (f['apellido'].errors['required']) { El apellido es obligatorio }
+              @else if (f['apellido'].errors['minlength']) { Mínimo 2 caracteres }
+            </small>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Correo electronico</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+          [class.input-error]="f['email'].touched && f['email'].invalid"
+        />
+        @if (f['email'].touched && f['email'].errors) {
+          <small class="error-text">
+            @if (f['email'].errors['required']) { El correo es obligatorio }
+            @else if (f['email'].errors['email']) { Ingresa un correo valido }
+          </small>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cedula">Cedula</label>
+          <input
+            type="text"
+            id="cedula"
+            formControlName="cedula"
+            placeholder="Ej: 1094000000"
+            maxlength="20"
+            [class.input-error]="f['cedula'].touched && f['cedula'].invalid"
+          />
+          @if (f['cedula'].touched && f['cedula'].errors) {
+            <small class="error-text">
+              @if (f['cedula'].errors['required']) { La cedula es obligatoria }
+              @else if (f['cedula'].errors['pattern']) { Solo numeros, entre 6 y 20 digitos }
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Telefono</label>
+          <input
+            type="text"
+            id="telefono"
+            formControlName="telefono"
+            placeholder="Ej: 3101234567"
+            maxlength="15"
+            [class.input-error]="f['telefono'].touched && f['telefono'].invalid"
+          />
+          @if (f['telefono'].touched && f['telefono'].errors) {
+            <small class="error-text">
+              @if (f['telefono'].errors['required']) { El telefono es obligatorio }
+              @else if (f['telefono'].errors['pattern']) { Solo numeros, entre 7 y 15 digitos }
+            </small>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contrasena</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          placeholder="Mínimo 8 caracteres"
+          [class.input-error]="f['password'].touched && f['password'].invalid"
+        />
+        @if (f['password'].touched && f['password'].errors) {
+          <small class="error-text">
+            @if (f['password'].errors['required']) { La contraseña es obligatoria }
+            @else if (f['password'].errors['minlength']) { Mínimo 8 caracteres }
+            @else if (f['password'].errors['pattern']) { Debe contener mayúscula, minúscula y número }
+          </small>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        @if (loading) {
+          <span class="spinner"></span> Registrando...
+        } @else {
+          Crear Cuenta
+        }
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+    </p>
+  </div>
+</div>

@@ -1,0 +1,166 @@
+.page-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-container h2 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 4rem;
+  color: #64748b;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem;
+  color: #94a3b8;
+  font-size: 1.2rem;
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #f8fafc;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.95rem;
+  color: #334155;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+.cliente-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.cliente-info small {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.total {
+  color: #16a34a;
+}
+
+.pedido-estado {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.estado-pendiente { background: #fef3c7; color: #92400e; }
+.estado-confirmado { background: #dbeafe; color: #1d4ed8; }
+.estado-enviado { background: #e0e7ff; color: #4338ca; }
+.estado-entregado { background: #dcfce7; color: #166534; }
+.estado-cancelado { background: #fef2f2; color: #dc2626; }
+.estado-pagado { background: #d1fae5; color: #065f46; }
+.estado-rechazado { background: #fce7f3; color: #9d174d; }
+
+.acciones {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.acciones select {
+  padding: 0.4rem 0.6rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: white;
+  cursor: pointer;
+}
+
+.acciones select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.detalle-row td {
+  padding: 0;
+  background: #f8fafc;
+}
+
+.pedido-detalles {
+  padding: 1rem 1.5rem;
+}
+
+.direccion {
+  color: #475569;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.detalles-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.detalle-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.det-nombre {
+  flex: 1;
+  font-weight: 500;
+}
+
+.det-qty {
+  color: #64748b;
+  min-width: 40px;
+}
+
+.det-precio {
+  color: #64748b;
+  min-width: 100px;
+  text-align: right;
+}
+
+.det-subtotal {
+  font-weight: 600;
+  color: #16a34a;
+  min-width: 100px;
+  text-align: right;
+}
+
+.estado-terminal {
+  font-size: 0.78rem;
+  color: #999;
+  font-style: italic;
+}

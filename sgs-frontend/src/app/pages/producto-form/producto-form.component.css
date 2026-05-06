@@ -1,0 +1,150 @@
+.form-page {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.form-card h2 {
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: white;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+/* Image Upload */
+.imagen-upload-area {
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.imagen-upload-area:hover {
+  border-color: #3b82f6;
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.upload-label:hover {
+  color: #2563eb;
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+}
+
+.upload-label small {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.imagen-preview-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  background: #f8fafc;
+}
+
+.imagen-preview {
+  max-height: 200px;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.btn-remove-imagen {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #ef4444;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.btn-remove-imagen:hover {
+  background: #dc2626;
+}
+
+.uploading-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #3b82f6;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 500px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

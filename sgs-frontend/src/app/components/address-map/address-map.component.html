@@ -1,0 +1,46 @@
+<div class="address-map">
+  <div class="form-group">
+    <label for="mapDireccion">Dirección completa <span class="required">*</span></label>
+    <input
+      id="mapDireccion"
+      #direccionInput
+      type="text"
+      [value]="direccion"
+      (input)="onDireccionInput($any($event.target).value)"
+      maxlength="500"
+      placeholder="Ej: Cra 15 #10-20, Armenia, Quindio"
+    />
+    <small class="char-count">{{ direccion.length }}/500</small>
+  </div>
+
+  @if (errorMessage) {
+    <div class="map-message map-error">{{ errorMessage }}</div>
+  }
+
+  <div class="map-shell">
+    @if (loadingMap) {
+      <div class="map-loading">
+        <span class="spinner-lg"></span>
+      </div>
+    }
+    <div #mapContainer class="map-container"></div>
+  </div>
+
+  <div class="map-footer">
+    <div class="coords">
+      @if (latitud !== null && longitud !== null) {
+        <span>Lat: {{ latitud }}</span>
+        <span>Lng: {{ longitud }}</span>
+      } @else {
+        <span>Sin coordenadas</span>
+      }
+    </div>
+    <button type="button" class="btn btn-outline-sm" (click)="usarMarcadorActual()" [disabled]="loadingMap">
+      Usar marcador
+    </button>
+  </div>
+
+  @if (geocoding) {
+    <small class="map-status">Buscando coordenadas...</small>
+  }
+</div>

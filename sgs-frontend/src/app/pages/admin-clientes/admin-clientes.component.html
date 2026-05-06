@@ -1,0 +1,85 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Gestion de Clientes</h2>
+      <p class="page-subtitle">Consulta la informacion de los clientes registrados</p>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <input
+      type="text"
+      class="filter-search"
+      placeholder="Buscar por nombre, email o cedula..."
+      [(ngModel)]="busqueda"
+      (input)="filtrar()"
+    />
+    <select class="filter-select" [(ngModel)]="filtroActividad" (change)="filtrar()">
+      <option value="todos">Todos los clientes</option>
+      <option value="con-pedidos">Con pedidos</option>
+      <option value="sin-pedidos">Sin pedidos</option>
+    </select>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner-lg"></div>
+      <p>Cargando clientes...</p>
+    </div>
+  } @else if (clientesFiltrados.length === 0) {
+    <div class="empty-state">
+      <p>No se encontraron clientes</p>
+    </div>
+  } @else {
+    <div class="stats-bar">
+      <div class="stat-card">
+        <span class="stat-value">{{ clientesFiltrados.length }}</span>
+        <span class="stat-label">Clientes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ getTotalPedidos() }}</span>
+        <span class="stat-label">Pedidos totales</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ formatPrecio(getTotalGastado()) }}</span>
+        <span class="stat-label">Total facturado</span>
+      </div>
+    </div>
+
+    <div class="table-container" data-cy="clientes-table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Email</th>
+            <th>Cedula</th>
+            <th>Telefono</th>
+            <th>Pedidos</th>
+            <th>Total gastado</th>
+            <th>Registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cliente of clientesFiltrados; track cliente.id) {
+            <tr data-cy="cliente-row">
+              <td>
+                <div class="cliente-nombre">
+                  <strong>{{ cliente.nombre }} {{ cliente.apellido }}</strong>
+                  @if (!cliente.activo) {
+                    <span class="badge-inactive">Inactivo</span>
+                  }
+                </div>
+              </td>
+              <td>{{ cliente.email }}</td>
+              <td>{{ cliente.cedula || '-' }}</td>
+              <td>{{ cliente.telefono || '-' }}</td>
+              <td><span class="pedidos-count">{{ cliente.totalPedidos }}</span></td>
+              <td><strong class="total">{{ formatPrecio(cliente.totalGastado) }}</strong></td>
+              <td>{{ formatFecha(cliente.fechaRegistro) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

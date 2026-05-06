@@ -1,0 +1,90 @@
+<div class="page-container">
+  <h2>Gestion de Pedidos</h2>
+
+  @if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner-lg"></div>
+      <p>Cargando pedidos...</p>
+    </div>
+  } @else if (pedidos.length === 0) {
+    <div class="empty-state">
+      <p>No hay pedidos registrados</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pedido of pedidos; track pedido.id) {
+            <tr>
+              <td><strong>#{{ pedido.id }}</strong></td>
+              <td>
+                <div class="cliente-info">
+                  <span>{{ pedido.usuarioNombre }}</span>
+                  <small>{{ pedido.usuarioEmail }}</small>
+                </div>
+              </td>
+              <td>{{ formatFecha(pedido.fechaCreacion) }}</td>
+              <td><strong class="total">{{ formatPrecio(pedido.total) }}</strong></td>
+              <td>
+                <span class="pedido-estado" [ngClass]="getEstadoClass(pedido.estado)">
+                  {{ getEstadoLabel(pedido.estado) }}
+                </span>
+              </td>
+              <td>
+                <div class="acciones">
+                  @if (esEstadoTerminal(pedido.estado)) {
+                    <span class="estado-terminal">Sin cambios permitidos</span>
+                  } @else {
+                    <select (change)="cambiarEstado(pedido.id, $any($event.target).value)" [value]="pedido.estado">
+                      @for (est of getEstadosPermitidos(pedido.estado); track est) {
+                        <option [value]="est" [selected]="est === pedido.estado">{{ getEstadoLabel(est) }}</option>
+                      }
+                    </select>
+                  }
+                  <button class="btn btn-sm btn-outline" (click)="toggleDetalles(pedido.id)">
+                    {{ pedidoExpandido === pedido.id ? '▲ Ocultar' : '▼ Detalles' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+            @if (pedidoExpandido === pedido.id) {
+              <tr class="detalle-row">
+                <td colspan="6">
+                  <div class="pedido-detalles">
+                    @if (pedido.direccionEnvio) {
+                      <p class="direccion"><strong>Dirección:</strong> {{ pedido.direccionEnvio }}</p>
+                    }
+                    <div class="detalles-grid">
+                      @for (det of pedido.detalles; track det.id) {
+                        <div class="detalle-item">
+                          <span class="det-nombre">{{ det.productoNombre }}</span>
+                          <span class="det-qty">x{{ det.cantidad }}</span>
+                          <span class="det-precio">{{ formatPrecio(det.precioUnitario) }}</span>
+                          <span class="det-subtotal">{{ formatPrecio(det.subtotal) }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

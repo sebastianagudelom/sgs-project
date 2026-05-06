@@ -1,0 +1,153 @@
+<div class="page-container">
+  <!-- Hero Banner -->
+  <div class="hero-banner">
+    <div class="hero-content">
+      <h1>Encuentra todo lo que necesitas</h1>
+      <p>Los mejores productos con los mejores precios, directo a tu puerta</p>
+      <div class="hero-search">
+        <input
+          type="text"
+          placeholder="Buscar productos..."
+          [(ngModel)]="busqueda"
+          (input)="buscar()"
+          class="hero-search-input"
+        />
+        <button class="hero-search-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Chips -->
+  @if (categorias.length > 0) {
+    <div class="category-chips">
+      <button
+        class="chip"
+        [class.chip-active]="!categoriaSeleccionada"
+        (click)="filtrarPorCategoria(null)"
+      >
+        Todos
+      </button>
+      @for (cat of categorias; track cat.id) {
+        <button
+          class="chip"
+          [class.chip-active]="categoriaSeleccionada === cat.id"
+          (click)="filtrarPorCategoria(cat.id)"
+          data-cy="category-chip"
+        >
+          {{ cat.nombre }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Results header -->
+  <div class="results-header">
+    <p class="results-count">
+      Mostrando <strong>{{ productosFiltrados.length }}</strong> productos
+    </p>
+    <div class="results-actions">
+      @if (isAdmin) {
+        <button class="btn btn-primary btn-new" (click)="agregarProducto()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+          Nuevo Producto
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner-lg"></div>
+      <p>Cargando productos...</p>
+    </div>
+  } @else if (productosFiltrados.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </div>
+      <h3>No se encontraron productos</h3>
+      <p>Intenta con otra búsqueda o categoría</p>
+    </div>
+  } @else {
+    <div class="product-grid" data-cy="product-grid">
+      @for (producto of productosFiltrados; track producto.id) {
+        <div class="product-card" [class.inactive]="!producto.activo" data-cy="product-card">
+          <div class="product-image" (click)="verDetalle(producto.id)">
+            @if (producto.imagenUrl) {
+              <img [src]="producto.imagenUrl" [alt]="producto.nombre" />
+            } @else {
+              <div class="no-image">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+              </div>
+            }
+            <!-- Badges -->
+            @if (!producto.activo) {
+              <span class="badge badge-inactive">Inactivo</span>
+            }
+            @if (producto.stock <= 5 && producto.stock > 0 && producto.activo) {
+              <span class="badge badge-warning">¡Últimas unidades!</span>
+            }
+            @if (producto.stock === 0 && producto.activo) {
+              <span class="badge badge-danger">Agotado</span>
+            }
+          </div>
+
+          <div class="product-info">
+            <span class="product-category">{{ producto.categoriaNombre }}</span>
+            <h3 class="product-name" (click)="verDetalle(producto.id)">{{ producto.nombre }}</h3>
+            <p class="product-description">{{ producto.descripcion }}</p>
+
+            <div class="product-pricing">
+              <span class="product-price">{{ formatPrecio(producto.precio) }}</span>
+            </div>
+
+            @if (isAdmin) {
+              <div class="admin-actions">
+                <button class="btn-action btn-edit" (click)="editarProducto(producto.id)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                  Editar
+                </button>
+                <button class="btn-action" [class.btn-toggle-off]="producto.activo" [class.btn-toggle-on]="!producto.activo" (click)="toggleActivo(producto)">
+                  @if (producto.activo) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    Desactivar
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Activar
+                  }
+                </button>
+                <button class="btn-action btn-delete" (click)="eliminarProducto(producto.id)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                  Eliminar
+                </button>
+              </div>
+            }
+
+            @if (isLoggedIn && !isAdmin && producto.activo && producto.stock > 0) {
+              <div class="cart-actions">
+                <div class="quantity-selector">
+                  <button class="btn-qty" (click)="decrementarCantidad(producto)" [disabled]="getCantidad(producto) <= 1">−</button>
+                  <span class="qty-value">{{ getCantidad(producto) }}</span>
+                  <button class="btn-qty" (click)="incrementarCantidad(producto)" [disabled]="getCantidad(producto) >= producto.stock">+</button>
+                </div>
+                <button class="btn-agregar" (click)="agregarAlCarrito(producto)" data-cy="btn-agregar-carrito">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                  Agregar
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (mensajeCarrito) {
+    <div class="toast-carrito">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      {{ mensajeCarrito }}
+    </div>
+  }
+</div>
