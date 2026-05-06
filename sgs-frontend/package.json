@@ -7,9 +7,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:ci": "ng test --watch=false --browsers=ChromiumHeadless",
+    "test:ci": "ng test --watch=false",
     "cy:open": "cypress open",
-    "cy:run": "cypress run --headless --browser chromium"
+    "cy:run": "cypress run --headless --browser chrome"
   },
   "prettier": {
     "printWidth": 100,
