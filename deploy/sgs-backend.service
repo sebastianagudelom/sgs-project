@@ -1,0 +1,22 @@
+[Unit]
+Description=SGS Backend - Spring Boot
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=sgs
+Group=sgs
+WorkingDirectory=/opt/sgs
+
+ExecStart=/usr/bin/java -jar /opt/sgs/sgs-backend.jar --spring.profiles.active=prod
+
+EnvironmentFile=/opt/sgs/.env
+
+Restart=on-failure
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

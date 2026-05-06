@@ -1,0 +1,273 @@
+{
+  "uid": "sgs-backend-main",
+  "title": "SGS Backend",
+  "tags": ["sgs", "spring-boot"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "templating": { "list": [] },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Peticiones HTTP/s",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "colorMode": "background" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 50 },
+            { "color": "red", "value": 200 }
+          ]}
+        }
+      },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(rate(http_server_requests_seconds_count{application=\"sgs-backend\"}[1m]))",
+        "legendFormat": "req/s"
+      }]
+    },
+    {
+      "id": 2,
+      "title": "Tasa de Errores HTTP (4xx+5xx)",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 0.01 },
+            { "color": "red", "value": 0.05 }
+          ]}
+        }
+      },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(rate(http_server_requests_seconds_count{application=\"sgs-backend\",status=~\"4..|5..\"}[5m])) / sum(rate(http_server_requests_seconds_count{application=\"sgs-backend\"}[5m]))",
+        "legendFormat": "error rate"
+      }]
+    },
+    {
+      "id": 3,
+      "title": "Latencia p99 (ms)",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 500 },
+            { "color": "red", "value": 2000 }
+          ]}
+        }
+      },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{application=\"sgs-backend\"}[5m])) by (le)) * 1000",
+        "legendFormat": "p99"
+      }]
+    },
+    {
+      "id": 4,
+      "title": "Memoria JVM usada (MB)",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 400 },
+            { "color": "red", "value": 700 }
+          ]}
+        }
+      },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(jvm_memory_used_bytes{application=\"sgs-backend\"}) / 1048576",
+        "legendFormat": "heap+non-heap"
+      }]
+    },
+    {
+      "id": 5,
+      "title": "Uptime",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value" },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "process_uptime_seconds{application=\"sgs-backend\"}",
+        "legendFormat": "uptime"
+      }]
+    },
+    {
+      "id": 6,
+      "title": "Conexiones DB activas",
+      "type": "stat",
+      "gridPos": { "x": 20, "y": 0, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 5 },
+            { "color": "red", "value": 9 }
+          ]}
+        }
+      },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "hikaricp_connections_active{application=\"sgs-backend\"}",
+        "legendFormat": "activas"
+      }]
+    },
+    {
+      "id": 7,
+      "title": "Peticiones HTTP por endpoint",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "table", "placement": "bottom" } },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2 } } },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(rate(http_server_requests_seconds_count{application=\"sgs-backend\"}[1m])) by (uri, method)",
+        "legendFormat": "{{method}} {{uri}}"
+      }]
+    },
+    {
+      "id": 8,
+      "title": "Latencia HTTP (p50 / p95 / p99)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } } },
+      "targets": [
+        {
+          "datasource": "Prometheus",
+          "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{application=\"sgs-backend\"}[5m])) by (le)) * 1000",
+          "legendFormat": "p50"
+        },
+        {
+          "datasource": "Prometheus",
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{application=\"sgs-backend\"}[5m])) by (le)) * 1000",
+          "legendFormat": "p95"
+        },
+        {
+          "datasource": "Prometheus",
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{application=\"sgs-backend\"}[5m])) by (le)) * 1000",
+          "legendFormat": "p99"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Errores HTTP por status",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 7 },
+      "options": { "tooltip": { "mode": "multi" } },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2 } } },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(rate(http_server_requests_seconds_count{application=\"sgs-backend\",status=~\"4..|5..\"}[1m])) by (status, uri)",
+        "legendFormat": "{{status}} {{uri}}"
+      }]
+    },
+    {
+      "id": 10,
+      "title": "JVM - Memoria heap",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 7 },
+      "options": { "tooltip": { "mode": "multi" } },
+      "fieldConfig": { "defaults": { "unit": "decmbytes", "custom": { "lineWidth": 2 } } },
+      "targets": [
+        {
+          "datasource": "Prometheus",
+          "expr": "jvm_memory_used_bytes{application=\"sgs-backend\",area=\"heap\"} / 1048576",
+          "legendFormat": "heap usada"
+        },
+        {
+          "datasource": "Prometheus",
+          "expr": "jvm_memory_max_bytes{application=\"sgs-backend\",area=\"heap\"} / 1048576",
+          "legendFormat": "heap máx"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "JVM - Threads",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 19, "w": 8, "h": 6 },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "targets": [
+        {
+          "datasource": "Prometheus",
+          "expr": "jvm_threads_live_threads{application=\"sgs-backend\"}",
+          "legendFormat": "live"
+        },
+        {
+          "datasource": "Prometheus",
+          "expr": "jvm_threads_daemon_threads{application=\"sgs-backend\"}",
+          "legendFormat": "daemon"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "CPU uso (proceso vs sistema)",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 19, "w": 8, "h": 6 },
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1 } },
+      "targets": [
+        {
+          "datasource": "Prometheus",
+          "expr": "process_cpu_usage{application=\"sgs-backend\"}",
+          "legendFormat": "proceso"
+        },
+        {
+          "datasource": "Prometheus",
+          "expr": "system_cpu_usage{application=\"sgs-backend\"}",
+          "legendFormat": "sistema"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "title": "HikariCP - Pool de conexiones",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 19, "w": 8, "h": 6 },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "targets": [
+        {
+          "datasource": "Prometheus",
+          "expr": "hikaricp_connections_active{application=\"sgs-backend\"}",
+          "legendFormat": "activas"
+        },
+        {
+          "datasource": "Prometheus",
+          "expr": "hikaricp_connections_idle{application=\"sgs-backend\"}",
+          "legendFormat": "idle"
+        },
+        {
+          "datasource": "Prometheus",
+          "expr": "hikaricp_connections_pending{application=\"sgs-backend\"}",
+          "legendFormat": "pendientes"
+        }
+      ]
+    }
+  ]
+}
