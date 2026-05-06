@@ -70,7 +70,10 @@ pipeline {
         dir('sgs-frontend') {
           // Esperar a que el backend reinicie tras el deploy
           sh 'sleep 30'
-          sh 'npm run cy:run'
+          // TERM=dumb evita problemas con tput sin TTY en Jenkins
+          // CI=true le dice a Cypress que estamos en CI
+          // timeout 600 mata el proceso si se cuelga (10 min máximo)
+          sh 'TERM=dumb CI=true timeout 600 npm run cy:run'
         }
       }
       post {
