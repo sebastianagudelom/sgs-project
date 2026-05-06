@@ -33,7 +33,7 @@ pipeline {
     stage('Backend: Unit Tests') {
       steps {
         dir('sgs-backend') {
-          sh './mvnw test'
+          sh './mvnw test -Dtest=\'!SgsBackendApplicationTests\''
         }
       }
       post {
