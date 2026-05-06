@@ -47,6 +47,20 @@ pipeline {
     // Skipeados en CI: Angular 20 + custom karmaConfig + Jenkins-snap chromium tienen
     // problemas conocidos. La cobertura E2E de Cypress es lo evaluado para esta entrega.
 
+    // Deploy ANTES de E2E para que Cypress pruebe la versión recién desplegada.
+    // Si los E2E fallan después, el sitio queda con la nueva versión (que es lo
+    // que se está probando). Para revertir, basta correr el job en un commit anterior.
+    stage('Deploy') {
+      when {
+        branch 'main'
+      }
+      steps {
+        sshagent(credentials: ['gcp-ssh-key']) {
+          sh "bash deploy/deploy-jenkins.sh ${DEPLOY_IP} ${DEPLOY_USER}"
+        }
+      }
+    }
+
     stage('E2E: Cypress') {
       environment {
         TESTRAIL_HOST    = credentials('testrail-host')
@@ -61,6 +75,8 @@ pipeline {
       }
       steps {
         dir('sgs-frontend') {
+          // Esperar a que el backend reinicie tras el deploy
+          sh 'sleep 30'
           sh 'npm run cy:run'
         }
       }
@@ -70,17 +86,6 @@ pipeline {
             artifacts: 'sgs-frontend/cypress/screenshots/**,sgs-frontend/cypress/videos/**',
             allowEmptyArchive: true
           )
-        }
-      }
-    }
-
-    stage('Deploy') {
-      when {
-        branch 'main'
-      }
-      steps {
-        sshagent(credentials: ['gcp-ssh-key']) {
-          sh "bash deploy/deploy-jenkins.sh ${DEPLOY_IP} ${DEPLOY_USER}"
         }
       }
     }

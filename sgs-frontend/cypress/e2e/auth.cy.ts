@@ -17,7 +17,8 @@ describe('Autenticación', () => {
   it('C3 Cerrar sesión redirige a login', () => {
     cy.loginAsTestUser();
     cy.url().should('include', '/productos');
-    cy.get('[data-cy=navbar-logout]').click({ force: true });
+    cy.get('[data-cy=navbar-user-btn]').click();
+    cy.get('[data-cy=navbar-logout]').click();
     cy.url().should('include', '/login');
     cy.get('[data-cy=navbar-cart]').should('not.exist');
   });

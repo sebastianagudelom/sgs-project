@@ -32,7 +32,7 @@
       <div class="nav-actions">
         @if (authService.isLoggedIn()) {
           <div class="nav-user-area">
-            <button class="nav-icon-btn user-btn" (click)="toggleUserMenu()">
+            <button class="nav-icon-btn user-btn" (click)="toggleUserMenu()" data-cy="navbar-user-btn">
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               <span class="nav-icon-label">{{ authService.getCurrentUser()?.nombre?.split(' ')?.[0] }}</span>
             </button>
