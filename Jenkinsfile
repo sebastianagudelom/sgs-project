@@ -56,7 +56,7 @@ pipeline {
     stage('Frontend: Unit Tests') {
       steps {
         dir('sgs-frontend') {
-          sh 'npm run test:ci -- --browsers=ChromeHeadlessCI'
+          sh 'npm run test:ci'
         }
       }
     }

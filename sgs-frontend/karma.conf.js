@@ -7,12 +7,10 @@ module.exports = function (config) {
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
-      require('@angular/build/plugins/karma'),
     ],
     client: { jasmine: { random: false } },
-    jasmineHtmlReporter: { suppressAll: true },
-    coverageReporter: { dir: require('path').join(__dirname, './coverage'), subdir: '.', reporters: [{ type: 'html' }, { type: 'text-summary' }] },
-    reporters: ['progress', 'kjhtml'],
+    coverageReporter: { dir: require('path').join(__dirname, './coverage'), subdir: '.', reporters: [{ type: 'text-summary' }] },
+    reporters: ['progress'],
     browsers: ['ChromeHeadlessCI'],
     customLaunchers: {
       ChromeHeadlessCI: {
@@ -20,6 +18,6 @@ module.exports = function (config) {
         flags: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],
       },
     },
-    restartOnFileChange: true,
+    singleRun: true,
   });
 };
