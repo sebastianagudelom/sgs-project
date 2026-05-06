@@ -9,7 +9,7 @@
     "test": "ng test",
     "test:ci": "ng test --watch=false",
     "cy:open": "cypress open",
-    "cy:run": "cypress run --headless --browser chrome"
+    "cy:run": "cypress run --headless --browser electron"
   },
   "prettier": {
     "printWidth": 100,
