@@ -48,6 +48,6 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.9.2",
     "cypress": "^13.17.0",
-    "cypress-testrail-reporter": "^2.4.0"
+    "cypress-testrail-reporter": "^1.3.4"
   }
 }
