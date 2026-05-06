@@ -51,9 +51,6 @@ pipeline {
     // Si los E2E fallan después, el sitio queda con la nueva versión (que es lo
     // que se está probando). Para revertir, basta correr el job en un commit anterior.
     stage('Deploy') {
-      when {
-        branch 'main'
-      }
       steps {
         sshagent(credentials: ['gcp-ssh-key']) {
           sh "bash deploy/deploy-jenkins.sh ${DEPLOY_IP} ${DEPLOY_USER}"
