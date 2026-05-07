@@ -1,0 +1,41 @@
+# ⚠️ NUNCA subir credenciales/secretos al repo
+CREDENCIALES.md
+*.env
+.env
+.env.local
+.env.production
+
+# Backend
+sgs-backend/target/
+sgs-backend/.mvn/wrapper/maven-wrapper.jar
+sgs-backend/HELP.md
+*.class
+*.jar
+!sgs-backend/.mvn/wrapper/maven-wrapper.properties
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Frontend
+sgs-frontend/node_modules/
+sgs-frontend/dist/
+sgs-frontend/out-tsc/
+sgs-frontend/.angular/
+sgs-frontend/coverage/
+sgs-frontend/cypress/screenshots/
+sgs-frontend/cypress/videos/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
