@@ -71,11 +71,11 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'productos',
+    loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'productos'
+    redirectTo: ''
   }
 ];

@@ -46,8 +46,14 @@ export class ProductoListaComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['buscar']) {
         this.busqueda = params['buscar'];
-        this.filtrar();
       }
+      if (params['categoria']) {
+        const catId = Number(params['categoria']);
+        if (!isNaN(catId)) {
+          this.categoriaSeleccionada = catId;
+        }
+      }
+      this.filtrar();
     });
   }
 

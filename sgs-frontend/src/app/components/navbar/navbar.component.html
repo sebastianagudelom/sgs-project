@@ -11,7 +11,7 @@
   <!-- Main nav -->
   <div class="main-nav">
     <div class="nav-container">
-      <a class="nav-brand" routerLink="/productos">
+      <a class="nav-brand" routerLink="/">
         <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         <span class="brand-text">SGS<span class="brand-highlight">Market</span></span>
       </a>
@@ -86,10 +86,10 @@
   @if (authService.isLoggedIn()) {
     <div class="category-bar">
       <div class="category-bar-content">
-        <a routerLink="/productos" routerLinkActive="cat-active" [routerLinkActiveOptions]="{exact: true}" class="cat-link">
+        <a routerLink="/" routerLinkActive="cat-active" [routerLinkActiveOptions]="{exact: true}" class="cat-link">
           Inicio
         </a>
-        <a routerLink="/productos" fragment="todos" class="cat-link">
+        <a routerLink="/productos" routerLinkActive="cat-active" class="cat-link">
           Todos los productos
         </a>
         @if (authService.isAdmin()) {

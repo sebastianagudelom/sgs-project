@@ -1,0 +1,246 @@
+<div class="home-container">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <span class="hero-tag">Tu supermercado en línea</span>
+      <h1 class="hero-title">
+        Compra fácil,<br>
+        <span class="hero-accent">recibe rápido</span>
+      </h1>
+      <p class="hero-subtitle">
+        Frutas frescas, lácteos, carnes y todo lo que necesitas para tu día a día.
+        Entregamos directo a tu puerta en toda Colombia.
+      </p>
+      <div class="hero-search-wrap">
+        <div class="hero-search">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input
+            type="text"
+            placeholder="¿Qué estás buscando hoy?"
+            [(ngModel)]="busqueda"
+            (keyup.enter)="buscar()"
+            class="hero-input"
+          />
+          <button class="hero-btn" (click)="buscar()">Buscar</button>
+        </div>
+      </div>
+      <div class="hero-ctas">
+        <button class="btn-primary" (click)="verTodosProductos()">Ver todos los productos</button>
+        <a class="btn-ghost" href="#categorias">Explorar categorías</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>{{ productos.length }}+</strong><span>productos</span></div>
+        <div class="stat"><strong>{{ categorias.length }}</strong><span>categorías</span></div>
+        <div class="stat"><strong>24h</strong><span>entrega</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section class="benefits">
+    <div class="benefit">
+      <div class="benefit-ico">🚚</div>
+      <div>
+        <strong>Envío rápido</strong>
+        <span>A toda Colombia</span>
+      </div>
+    </div>
+    <div class="benefit">
+      <div class="benefit-ico">🕐</div>
+      <div>
+        <strong>Atención 8AM-10PM</strong>
+        <span>Todos los días</span>
+      </div>
+    </div>
+    <div class="benefit">
+      <div class="benefit-ico">💳</div>
+      <div>
+        <strong>Pago seguro</strong>
+        <span>Todas las tarjetas</span>
+      </div>
+    </div>
+    <div class="benefit">
+      <div class="benefit-ico">↩️</div>
+      <div>
+        <strong>Garantía total</strong>
+        <span>Devolución gratis</span>
+      </div>
+    </div>
+  </section>
+
+  @if (loading) {
+    <div class="loading-block">
+      <div class="spinner-lg"></div>
+      <p>Cargando tu tienda...</p>
+    </div>
+  } @else {
+
+    <!-- CATEGORÍAS DESTACADAS (cards grandes) -->
+    @if (categoriasDestacadas.length > 0) {
+      <section class="featured-cats">
+        <div class="section-head">
+          <h2>Categorías destacadas</h2>
+          <a class="section-link" href="#categorias">Ver todas</a>
+        </div>
+        <div class="featured-grid">
+          @for (cat of categoriasDestacadas; track cat.id) {
+            <div class="featured-card" (click)="irACategoria(cat.id)">
+              <div class="featured-icon">{{ iconoCategoria(cat.nombre) }}</div>
+              <h3>{{ cat.nombre }}</h3>
+              <p>{{ cat.descripcion || 'Encuentra los mejores productos' }}</p>
+              <span class="featured-cta">Comprar →</span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- CARRUSEL: NOVEDADES -->
+    @if (novedades.length > 0) {
+      <section class="carousel-section">
+        <div class="section-head">
+          <h2>✨ Novedades</h2>
+          <a class="section-link" (click)="verTodosProductos()">Ver todos</a>
+        </div>
+        <div class="carousel-wrap">
+          <button class="carousel-nav left" (click)="scrollCarrusel('carrusel-novedades', -1)">‹</button>
+          <div class="carousel" id="carrusel-novedades">
+            @for (p of novedades; track p.id) {
+              <div class="mini-card" (click)="verDetalle(p.id)">
+                <div class="mini-img">
+                  @if (p.imagenUrl) {
+                    <img [src]="p.imagenUrl" [alt]="p.nombre" loading="lazy" />
+                  } @else {
+                    <div class="mini-noimg">📦</div>
+                  }
+                  @if (p.stock <= 5 && p.stock > 0) {
+                    <span class="mini-badge mini-badge-warn">¡Pocas unidades!</span>
+                  }
+                </div>
+                <div class="mini-info">
+                  <span class="mini-cat">{{ p.categoriaNombre }}</span>
+                  <h4>{{ p.nombre }}</h4>
+                  <div class="mini-bottom">
+                    <span class="mini-price">{{ formatPrecio(p.precio) }}</span>
+                    @if (!isLoggedIn || (isLoggedIn && p.stock > 0)) {
+                      <button class="mini-add" (click)="agregarAlCarrito(p, $event)" title="Agregar al carrito">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <button class="carousel-nav right" (click)="scrollCarrusel('carrusel-novedades', 1)">›</button>
+        </div>
+      </section>
+    }
+
+    <!-- CARRUSEL: MÁS VENDIDOS / DESTACADOS -->
+    @if (destacados.length > 0) {
+      <section class="carousel-section alt-bg">
+        <div class="section-head">
+          <h2>🔥 Lo más popular</h2>
+          <a class="section-link" (click)="verTodosProductos()">Ver todos</a>
+        </div>
+        <div class="carousel-wrap">
+          <button class="carousel-nav left" (click)="scrollCarrusel('carrusel-destacados', -1)">‹</button>
+          <div class="carousel" id="carrusel-destacados">
+            @for (p of destacados; track p.id) {
+              <div class="mini-card" (click)="verDetalle(p.id)">
+                <div class="mini-img">
+                  @if (p.imagenUrl) {
+                    <img [src]="p.imagenUrl" [alt]="p.nombre" loading="lazy" />
+                  } @else {
+                    <div class="mini-noimg">📦</div>
+                  }
+                </div>
+                <div class="mini-info">
+                  <span class="mini-cat">{{ p.categoriaNombre }}</span>
+                  <h4>{{ p.nombre }}</h4>
+                  <div class="mini-bottom">
+                    <span class="mini-price">{{ formatPrecio(p.precio) }}</span>
+                    <button class="mini-add" (click)="agregarAlCarrito(p, $event)" title="Agregar al carrito">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <button class="carousel-nav right" (click)="scrollCarrusel('carrusel-destacados', 1)">›</button>
+        </div>
+      </section>
+    }
+
+    <!-- CARRUSELES POR CATEGORÍA -->
+    @for (carr of carruselesPorCategoria; track carr.categoria.id) {
+      <section class="carousel-section">
+        <div class="section-head">
+          <h2>{{ iconoCategoria(carr.categoria.nombre) }} {{ carr.categoria.nombre }}</h2>
+          <a class="section-link" (click)="irACategoria(carr.categoria.id)">Ver todo →</a>
+        </div>
+        <div class="carousel-wrap">
+          <button class="carousel-nav left" (click)="scrollCarrusel('carrusel-cat-' + carr.categoria.id, -1)">‹</button>
+          <div class="carousel" [id]="'carrusel-cat-' + carr.categoria.id">
+            @for (p of carr.productos; track p.id) {
+              <div class="mini-card" (click)="verDetalle(p.id)">
+                <div class="mini-img">
+                  @if (p.imagenUrl) {
+                    <img [src]="p.imagenUrl" [alt]="p.nombre" loading="lazy" />
+                  } @else {
+                    <div class="mini-noimg">📦</div>
+                  }
+                </div>
+                <div class="mini-info">
+                  <span class="mini-cat">{{ p.categoriaNombre }}</span>
+                  <h4>{{ p.nombre }}</h4>
+                  <div class="mini-bottom">
+                    <span class="mini-price">{{ formatPrecio(p.precio) }}</span>
+                    <button class="mini-add" (click)="agregarAlCarrito(p, $event)" title="Agregar al carrito">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <button class="carousel-nav right" (click)="scrollCarrusel('carrusel-cat-' + carr.categoria.id, 1)">›</button>
+        </div>
+      </section>
+    }
+
+    <!-- COMPRAR POR CATEGORÍA (todas) -->
+    @if (categorias.length > 0) {
+      <section class="all-cats" id="categorias">
+        <div class="section-head">
+          <h2>Comprar por categoría</h2>
+        </div>
+        <div class="cats-grid">
+          @for (cat of categorias; track cat.id) {
+            <button class="cat-tile" (click)="irACategoria(cat.id)">
+              <span class="cat-tile-icon">{{ iconoCategoria(cat.nombre) }}</span>
+              <span class="cat-tile-name">{{ cat.nombre }}</span>
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- CTA FINAL -->
+    <section class="final-cta">
+      <h2>¿Listo para hacer tu pedido?</h2>
+      <p>Más de {{ productos.length }} productos esperándote</p>
+      <button class="btn-primary btn-lg" (click)="verTodosProductos()">Ver todos los productos</button>
+    </section>
+  }
+
+  @if (mensajeCarrito) {
+    <div class="toast-carrito">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      {{ mensajeCarrito }}
+    </div>
+  }
+</div>

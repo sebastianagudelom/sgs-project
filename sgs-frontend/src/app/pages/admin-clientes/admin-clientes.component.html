@@ -1,21 +1,27 @@
 <div class="page-container">
   <div class="page-header">
     <div>
-      <h2>Gestion de Clientes</h2>
-      <p class="page-subtitle">Consulta la informacion de los clientes registrados</p>
+      <h2>Gestión de Clientes</h2>
+      <p class="page-subtitle">Administra clientes, contraseñas y direcciones</p>
     </div>
+    <button class="btn btn-primary" (click)="abrirCrear()" data-cy="btn-crear-cliente">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+      Nuevo cliente
+    </button>
   </div>
 
   <div class="filters-bar">
     <input
       type="text"
       class="filter-search"
-      placeholder="Buscar por nombre, email o cedula..."
+      placeholder="Buscar por nombre, email o cédula..."
       [(ngModel)]="busqueda"
       (input)="filtrar()"
     />
     <select class="filter-select" [(ngModel)]="filtroActividad" (change)="filtrar()">
       <option value="todos">Todos los clientes</option>
+      <option value="activos">Solo activos</option>
+      <option value="inactivos">Solo inactivos</option>
       <option value="con-pedidos">Con pedidos</option>
       <option value="sin-pedidos">Sin pedidos</option>
     </select>
@@ -52,11 +58,12 @@
           <tr>
             <th>Cliente</th>
             <th>Email</th>
-            <th>Cedula</th>
-            <th>Telefono</th>
+            <th>Cédula</th>
+            <th>Teléfono</th>
             <th>Pedidos</th>
             <th>Total gastado</th>
             <th>Registro</th>
+            <th class="col-acciones">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -76,10 +83,214 @@
               <td><span class="pedidos-count">{{ cliente.totalPedidos }}</span></td>
               <td><strong class="total">{{ formatPrecio(cliente.totalGastado) }}</strong></td>
               <td>{{ formatFecha(cliente.fechaRegistro) }}</td>
+              <td class="col-acciones">
+                <div class="acciones-row">
+                  <button class="btn-icon btn-edit" title="Editar" (click)="abrirEditar(cliente)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                  </button>
+                  <button class="btn-icon btn-key" title="Reset contraseña" (click)="abrirPassword(cliente)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 19 4"/><path d="M18 5l2 2"/><path d="M15 8l2 2"/></svg>
+                  </button>
+                  <button class="btn-icon btn-map" title="Direcciones" (click)="abrirDirecciones(cliente)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </button>
+                  <button class="btn-icon" [class.btn-toggle-off]="cliente.activo" [class.btn-toggle-on]="!cliente.activo"
+                          [title]="cliente.activo ? 'Desactivar' : 'Activar'" (click)="cambiarEstado(cliente)">
+                    @if (cliente.activo) {
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    } @else {
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    }
+                  </button>
+                </div>
+              </td>
             </tr>
           }
         </tbody>
       </table>
+    </div>
+  }
+
+  <!-- TOAST -->
+  @if (mensaje) {
+    <div class="toast">{{ mensaje }}</div>
+  }
+
+  <!-- ============= MODALES ============= -->
+
+  <!-- Modal: Crear / Editar -->
+  @if (modalAbierto === 'crear' || modalAbierto === 'editar') {
+    <div class="modal-overlay" (click)="cerrarModal()"></div>
+    <div class="modal" role="dialog">
+      <div class="modal-header">
+        <h3>{{ modalAbierto === 'crear' ? 'Nuevo cliente' : 'Editar cliente' }}</h3>
+        <button class="modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input type="text" [(ngModel)]="formCliente.nombre" maxlength="50" />
+          </div>
+          <div class="form-group">
+            <label>Apellido *</label>
+            <input type="text" [(ngModel)]="formCliente.apellido" maxlength="50" />
+          </div>
+          <div class="form-group form-group-full">
+            <label>Email *</label>
+            <input type="email" [(ngModel)]="formCliente.email" maxlength="100" />
+          </div>
+          <div class="form-group">
+            <label>Cédula</label>
+            <input type="text" [(ngModel)]="formCliente.cedula" maxlength="20" />
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" [(ngModel)]="formCliente.telefono" maxlength="20" />
+          </div>
+          @if (modalAbierto === 'crear') {
+            <div class="form-group form-group-full">
+              <label>Contraseña inicial *</label>
+              <input type="password" [(ngModel)]="formCliente.password" minlength="6" placeholder="Mínimo 6 caracteres" />
+            </div>
+          }
+        </div>
+        @if (errorMsg) {
+          <div class="form-error">{{ errorMsg }}</div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="cerrarModal()" [disabled]="guardando">Cancelar</button>
+        @if (modalAbierto === 'crear') {
+          <button class="btn btn-primary" (click)="guardarNuevo()" [disabled]="guardando">
+            {{ guardando ? 'Guardando...' : 'Crear cliente' }}
+          </button>
+        } @else {
+          <button class="btn btn-primary" (click)="guardarEdicion()" [disabled]="guardando">
+            {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Reset Password -->
+  @if (modalAbierto === 'password') {
+    <div class="modal-overlay" (click)="cerrarModal()"></div>
+    <div class="modal modal-sm" role="dialog">
+      <div class="modal-header">
+        <h3>Cambiar contraseña</h3>
+        <button class="modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          Cliente: <strong>{{ clienteSeleccionado?.nombre }} {{ clienteSeleccionado?.apellido }}</strong>
+        </p>
+        <div class="form-group">
+          <label>Nueva contraseña</label>
+          <input type="password" [(ngModel)]="nuevaPassword" minlength="6" placeholder="Mínimo 6 caracteres" />
+        </div>
+        <div class="form-group">
+          <label>Confirmar contraseña</label>
+          <input type="password" [(ngModel)]="confirmarPassword" />
+        </div>
+        @if (errorMsg) {
+          <div class="form-error">{{ errorMsg }}</div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="cerrarModal()" [disabled]="guardando">Cancelar</button>
+        <button class="btn btn-primary" (click)="guardarPassword()" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Guardar contraseña' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Direcciones -->
+  @if (modalAbierto === 'direcciones') {
+    <div class="modal-overlay" (click)="cerrarModal()"></div>
+    <div class="modal" role="dialog">
+      <div class="modal-header">
+        <h3>Direcciones de {{ clienteSeleccionado?.nombre }} {{ clienteSeleccionado?.apellido }}</h3>
+        <button class="modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        @if (modoDireccion === 'lista') {
+          @if (cargandoDirecciones) {
+            <p>Cargando...</p>
+          } @else if (direccionesCliente.length === 0) {
+            <div class="empty-mini">
+              <p>Este cliente no tiene direcciones registradas.</p>
+            </div>
+          } @else {
+            <div class="dirs-list">
+              @for (d of direccionesCliente; track d.id) {
+                <div class="dir-card">
+                  <div class="dir-info">
+                    <div class="dir-head">
+                      <strong>{{ d.nombre }}</strong>
+                      @if (d.predeterminada) {
+                        <span class="badge-default">Predeterminada</span>
+                      }
+                    </div>
+                    <p class="dir-text">{{ d.direccion }}</p>
+                    @if (d.latitud && d.longitud) {
+                      <p class="dir-coords">📍 {{ d.latitud }}, {{ d.longitud }}</p>
+                    }
+                  </div>
+                  <div class="dir-actions">
+                    <button class="btn-icon btn-edit" (click)="irEditarDireccion(d)" title="Editar">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                    </button>
+                    <button class="btn-icon btn-delete" (click)="eliminarDireccion(d)" title="Eliminar">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          <button class="btn btn-secondary btn-block" (click)="irNuevaDireccion()">+ Agregar nueva dirección</button>
+        } @else {
+          <h4>{{ modoDireccion === 'crear' ? 'Nueva dirección' : 'Editar dirección' }}</h4>
+          <div class="form-grid">
+            <div class="form-group form-group-full">
+              <label>Nombre (Ej: Casa, Oficina) *</label>
+              <input type="text" [(ngModel)]="formDireccion.nombre" maxlength="50" />
+            </div>
+            <div class="form-group form-group-full">
+              <label>Dirección completa *</label>
+              <textarea [(ngModel)]="formDireccion.direccion" maxlength="500" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Latitud (opcional)</label>
+              <input type="number" step="0.0000001" [(ngModel)]="formDireccion.latitud" />
+            </div>
+            <div class="form-group">
+              <label>Longitud (opcional)</label>
+              <input type="number" step="0.0000001" [(ngModel)]="formDireccion.longitud" />
+            </div>
+            <div class="form-group form-group-full">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="formDireccion.predeterminada" />
+                Marcar como dirección predeterminada
+              </label>
+            </div>
+          </div>
+          @if (errorMsg) {
+            <div class="form-error">{{ errorMsg }}</div>
+          }
+        }
+      </div>
+      @if (modoDireccion !== 'lista') {
+        <div class="modal-footer">
+          <button class="btn btn-ghost" (click)="cancelarFormDireccion()" [disabled]="guardando">Cancelar</button>
+          <button class="btn btn-primary" (click)="guardarDireccion()" [disabled]="guardando">
+            {{ guardando ? 'Guardando...' : 'Guardar dirección' }}
+          </button>
+        </div>
+      }
     </div>
   }
 </div>
