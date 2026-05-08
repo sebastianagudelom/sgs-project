@@ -4,7 +4,7 @@ describe('Carrito y pedido', () => {
     cy.visit('/productos');
   });
 
-  it('C7 Agregar producto al carrito incrementa el contador', () => {
+  it('C52 Agregar producto al carrito incrementa el contador', () => {
     cy.get('[data-cy=btn-agregar-carrito]').first().click();
     cy.get('[data-cy=cart-badge]').should('be.visible');
     cy.get('[data-cy=cart-badge]').invoke('text').then((text) => {
@@ -12,7 +12,7 @@ describe('Carrito y pedido', () => {
     });
   });
 
-  it('C8 Ver carrito muestra producto y precio', () => {
+  it('C53 Ver carrito muestra producto y precio', () => {
     cy.get('[data-cy=btn-agregar-carrito]').first().click();
     cy.visit('/carrito');
     cy.get('[data-cy=carrito-items]').should('be.visible');
@@ -23,7 +23,7 @@ describe('Carrito y pedido', () => {
     });
   });
 
-  it('C9 Botón de pago está disponible con producto y dirección', () => {
+  it('C54 Botón de pago está disponible con producto y dirección', () => {
     cy.get('[data-cy=btn-agregar-carrito]').first().click();
     cy.visit('/carrito');
     cy.get('[data-cy=carrito-item]').should('have.length.greaterThan', 0);

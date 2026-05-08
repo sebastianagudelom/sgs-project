@@ -3,13 +3,13 @@ describe('Panel de administración', () => {
     cy.loginAsAdmin();
   });
 
-  it('C10 Login como admin da acceso a rutas de administración', () => {
+  it('C55 Login como admin da acceso a rutas de administración', () => {
     cy.visit('/admin/clientes');
     cy.url().should('include', '/admin/clientes');
     cy.get('h2').should('contain.text', 'Clientes');
   });
 
-  it('C11 Gestión de clientes muestra tabla con datos', () => {
+  it('C56 Gestión de clientes muestra tabla con datos', () => {
     cy.visit('/admin/clientes');
     cy.get('[data-cy=clientes-table-container]').should('be.visible');
     cy.get('[data-cy=cliente-row]').should('have.length.greaterThan', 0);
@@ -18,7 +18,7 @@ describe('Panel de administración', () => {
     });
   });
 
-  it('C12 Alertas de inventario muestra estado del stock', () => {
+  it('C57 Alertas de inventario muestra estado del stock', () => {
     cy.visit('/admin/inventario-alertas');
     cy.url().should('include', '/admin/inventario-alertas');
     cy.get('h2').should('contain.text', 'Inventario');

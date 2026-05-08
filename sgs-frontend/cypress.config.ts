@@ -16,18 +16,15 @@ export default defineConfig({
     defaultCommandTimeout: 10000,
     video: false,
     screenshotOnRunFailure: true,
-    reporter: 'spec',
-
-    // Para integrar con TestRail descomenta y elimina la línea `reporter: 'spec'` de arriba:
-    // reporter: 'cypress-testrail-reporter',
-    // reporterOptions: {
-    //   host: process.env['TESTRAIL_HOST'] ?? '',
-    //   username: process.env['TESTRAIL_USER'] ?? '',
-    //   password: process.env['TESTRAIL_API_KEY'] ?? '',
-    //   projectId: process.env['TESTRAIL_PROJECT_ID'] ?? '',
-    //   suiteId: process.env['TESTRAIL_SUITE_ID'] ?? '',
-    //   includeAllInTestRun: false,
-    // },
+    reporter: 'cypress-testrail-reporter',
+    reporterOptions: {
+      host: process.env['TESTRAIL_HOST'] ?? '',
+      username: process.env['TESTRAIL_USER'] ?? '',
+      password: process.env['TESTRAIL_API_KEY'] ?? '',
+      projectId: process.env['TESTRAIL_PROJECT_ID'] ?? '',
+      suiteId: process.env['TESTRAIL_SUITE_ID'] ?? '',
+      includeAllInTestRun: false,
+    },
 
     env: {
       testUserEmail: process.env['TEST_USER_EMAIL'] ?? 'testuser@sgs.com',

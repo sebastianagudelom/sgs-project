@@ -4,12 +4,12 @@ describe('Catálogo de productos', () => {
     cy.visit('/productos');
   });
 
-  it('C4 Lista de productos muestra cards', () => {
+  it('C49 Lista de productos muestra cards', () => {
     cy.get('[data-cy=product-grid]').should('be.visible');
     cy.get('[data-cy=product-card]').should('have.length.greaterThan', 0);
   });
 
-  it('C5 Ver detalle de producto muestra nombre y precio', () => {
+  it('C50 Ver detalle de producto muestra nombre y precio', () => {
     cy.get('[data-cy=product-card]').first().within(() => {
       cy.get('.product-name').should('not.be.empty');
       cy.get('.product-price').should('not.be.empty');
@@ -19,7 +19,7 @@ describe('Catálogo de productos', () => {
     cy.get('.producto-nombre, h1, h2').first().should('not.be.empty');
   });
 
-  it('C6 Filtrar por categoría muestra solo productos de esa categoría', () => {
+  it('C51 Filtrar por categoría muestra solo productos de esa categoría', () => {
     cy.get('[data-cy=category-chip]').first().then(($chip) => {
       const categoriaNombre = $chip.text().trim();
       cy.wrap($chip).click();
