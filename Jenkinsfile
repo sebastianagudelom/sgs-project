@@ -56,9 +56,9 @@ pipeline {
 
     stage('E2E: Cypress') {
       environment {
-        TESTRAIL_HOST    = credentials('testrail-host')
-        TESTRAIL_USER    = credentials('testrail-user')
-        TESTRAIL_API_KEY = credentials('testrail-api-key')
+        TESTRAIL_HOST     = credentials('testrail-host')
+        TESTRAIL_USERNAME = credentials('testrail-user')
+        TESTRAIL_PASSWORD = credentials('testrail-api-key')
         TESTRAIL_PROJECT_ID = credentials('testrail-project-id')
         TESTRAIL_SUITE_ID   = credentials('testrail-suite-id')
         ADMIN_EMAIL      = credentials('sgs-admin-email')
