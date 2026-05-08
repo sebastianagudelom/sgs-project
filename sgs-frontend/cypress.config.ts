@@ -1,6 +1,6 @@
 import { defineConfig } from 'cypress';
 // @ts-ignore - paquete sin types oficiales
-import { registerPlugin } from 'cypress-testrail-simple';
+import registerPlugin from 'cypress-testrail-simple/src/plugin';
 
 // Integración con TestRail vía cypress-testrail-simple (plugin, no reporter).
 // Posproc resultados al final de cada `cypress run`, sin bloquear el arranque.
