@@ -24,8 +24,8 @@ export default defineConfig({
     screenshotOnRunFailure: true,
     reporter: 'spec',
 
-    setupNodeEvents(on, config) {
-      registerPlugin(on, config);
+    async setupNodeEvents(on, config) {
+      await registerPlugin(on, config);
       return config;
     },
 
