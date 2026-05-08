@@ -1,7 +1,6 @@
 import { defineConfig } from 'cypress';
-// CommonJS module sin types — usamos require para evitar interop issues
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const registerPlugin = require('cypress-testrail-simple/src/plugin');
+const registerPlugin = require('cypress-testrail-simple/src/plugin') as (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) => void;
 
 // Integración con TestRail vía cypress-testrail-simple (plugin, no reporter).
 // Posproc resultados al final de cada `cypress run`, sin bloquear el arranque.
