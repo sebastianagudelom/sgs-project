@@ -70,10 +70,17 @@ pipeline {
         dir('sgs-frontend') {
           // Esperar a que el backend reinicie tras el deploy
           sh 'sleep 30'
-          // TERM=dumb evita problemas con tput sin TTY en Jenkins
-          // CI=true le dice a Cypress que estamos en CI
-          // timeout 600 mata el proceso si se cuelga (10 min máximo)
-          sh 'TERM=dumb CI=true timeout 600 npm run cy:run'
+          // Crear Test Run en TestRail y capturar el ID
+          sh '''
+            TESTRAIL_RUN_ID=$(curl -s -X POST \
+              "${TESTRAIL_HOST}/index.php?/api/v2/add_run/${TESTRAIL_PROJECTID}" \
+              -H "Content-Type: application/json" \
+              -u "${TESTRAIL_USERNAME}:${TESTRAIL_PASSWORD}" \
+              -d "{\\"suite_id\\":${TESTRAIL_SUITEID},\\"name\\":\\"CI Run $(date +%Y-%m-%d)\\"}" \
+              | python3 -c "import sys,json; print(json.load(sys.stdin)[\'id\'])")
+            echo "TestRail Run ID: $TESTRAIL_RUN_ID"
+            TERM=dumb CI=true TESTRAIL_RUN_ID=$TESTRAIL_RUN_ID timeout 600 npm run cy:run
+          '''
         }
       }
       post {
