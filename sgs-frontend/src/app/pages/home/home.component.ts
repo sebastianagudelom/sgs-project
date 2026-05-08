@@ -35,28 +35,6 @@ export class HomeComponent implements OnInit {
   isLoggedIn = false;
   mensajeCarrito = '';
 
-  // Iconos visuales para categorías (mapeo nombre → emoji/icono)
-  private categoriaIconos: { [key: string]: string } = {
-    'Lacteos': '🥛',
-    'Lácteos': '🥛',
-    'Granos': '🌾',
-    'Frutas': '🍎',
-    'Panaderia': '🥖',
-    'Panadería': '🥖',
-    'Bebidas': '🥤',
-    'Carnes': '🥩',
-    'Verduras': '🥕',
-    'Snacks': '🍿',
-    'Aseo': '🧴',
-    'Limpieza': '🧼',
-    'Enlatados': '🥫',
-    'Mascotas': '🐾',
-    'Bebés': '🍼',
-    'Bebes': '🍼',
-    'Congelados': '🧊',
-    'Dulces': '🍬'
-  };
-
   constructor(
     private productoService: ProductoService,
     private categoriaService: CategoriaService,
@@ -89,18 +67,15 @@ export class HomeComponent implements OnInit {
   }
 
   private armarSecciones(): void {
-    // Destacados: 8 productos con stock alto (más populares por proxy)
     this.destacados = [...this.productos]
       .filter(p => p.stock > 5)
       .sort((a, b) => b.stock - a.stock)
       .slice(0, 8);
 
-    // Novedades: últimos 8 por fecha de creación
     this.novedades = [...this.productos]
       .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
       .slice(0, 8);
 
-    // Un carrusel por categoría (solo las que tengan productos)
     this.carruselesPorCategoria = this.categorias
       .map(cat => ({
         categoria: cat,
@@ -129,10 +104,6 @@ export class HomeComponent implements OnInit {
 
   verDetalle(id: number): void {
     this.router.navigate(['/productos', id]);
-  }
-
-  iconoCategoria(nombre: string): string {
-    return this.categoriaIconos[nombre] || '🛒';
   }
 
   agregarAlCarrito(producto: ProductoResponse, event: Event): void {
@@ -172,7 +143,6 @@ export class HomeComponent implements OnInit {
     }).format(precio);
   }
 
-  // Categorías destacadas: las 4 con más productos
   get categoriasDestacadas(): CategoriaResponse[] {
     return [...this.categorias]
       .map(c => ({

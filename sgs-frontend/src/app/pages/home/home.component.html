@@ -40,28 +40,36 @@
   <!-- BENEFICIOS -->
   <section class="benefits">
     <div class="benefit">
-      <div class="benefit-ico">🚚</div>
+      <div class="benefit-ico">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+      </div>
       <div>
         <strong>Envío rápido</strong>
         <span>A toda Colombia</span>
       </div>
     </div>
     <div class="benefit">
-      <div class="benefit-ico">🕐</div>
+      <div class="benefit-ico">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
       <div>
         <strong>Atención 8AM-10PM</strong>
         <span>Todos los días</span>
       </div>
     </div>
     <div class="benefit">
-      <div class="benefit-ico">💳</div>
+      <div class="benefit-ico">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      </div>
       <div>
         <strong>Pago seguro</strong>
         <span>Todas las tarjetas</span>
       </div>
     </div>
     <div class="benefit">
-      <div class="benefit-ico">↩️</div>
+      <div class="benefit-ico">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+      </div>
       <div>
         <strong>Garantía total</strong>
         <span>Devolución gratis</span>
@@ -76,7 +84,7 @@
     </div>
   } @else {
 
-    <!-- CATEGORÍAS DESTACADAS (cards grandes) -->
+    <!-- CATEGORÍAS DESTACADAS -->
     @if (categoriasDestacadas.length > 0) {
       <section class="featured-cats">
         <div class="section-head">
@@ -86,7 +94,9 @@
         <div class="featured-grid">
           @for (cat of categoriasDestacadas; track cat.id) {
             <div class="featured-card" (click)="irACategoria(cat.id)">
-              <div class="featured-icon">{{ iconoCategoria(cat.nombre) }}</div>
+              <div class="featured-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </div>
               <h3>{{ cat.nombre }}</h3>
               <p>{{ cat.descripcion || 'Encuentra los mejores productos' }}</p>
               <span class="featured-cta">Comprar →</span>
@@ -100,7 +110,10 @@
     @if (novedades.length > 0) {
       <section class="carousel-section">
         <div class="section-head">
-          <h2>✨ Novedades</h2>
+          <h2>
+            <svg class="head-ico" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m5.6 5.6 2.1 2.1"/><path d="m16.3 16.3 2.1 2.1"/><path d="m5.6 18.4 2.1-2.1"/><path d="m16.3 7.7 2.1-2.1"/></svg>
+            Novedades
+          </h2>
           <a class="section-link" (click)="verTodosProductos()">Ver todos</a>
         </div>
         <div class="carousel-wrap">
@@ -112,7 +125,9 @@
                   @if (p.imagenUrl) {
                     <img [src]="p.imagenUrl" [alt]="p.nombre" loading="lazy" />
                   } @else {
-                    <div class="mini-noimg">📦</div>
+                    <div class="mini-noimg">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                    </div>
                   }
                   @if (p.stock <= 5 && p.stock > 0) {
                     <span class="mini-badge mini-badge-warn">¡Pocas unidades!</span>
@@ -142,7 +157,10 @@
     @if (destacados.length > 0) {
       <section class="carousel-section alt-bg">
         <div class="section-head">
-          <h2>🔥 Lo más popular</h2>
+          <h2>
+            <svg class="head-ico" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Lo más popular
+          </h2>
           <a class="section-link" (click)="verTodosProductos()">Ver todos</a>
         </div>
         <div class="carousel-wrap">
@@ -154,7 +172,9 @@
                   @if (p.imagenUrl) {
                     <img [src]="p.imagenUrl" [alt]="p.nombre" loading="lazy" />
                   } @else {
-                    <div class="mini-noimg">📦</div>
+                    <div class="mini-noimg">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                    </div>
                   }
                 </div>
                 <div class="mini-info">
@@ -179,7 +199,7 @@
     @for (carr of carruselesPorCategoria; track carr.categoria.id) {
       <section class="carousel-section">
         <div class="section-head">
-          <h2>{{ iconoCategoria(carr.categoria.nombre) }} {{ carr.categoria.nombre }}</h2>
+          <h2>{{ carr.categoria.nombre }}</h2>
           <a class="section-link" (click)="irACategoria(carr.categoria.id)">Ver todo →</a>
         </div>
         <div class="carousel-wrap">
@@ -191,7 +211,9 @@
                   @if (p.imagenUrl) {
                     <img [src]="p.imagenUrl" [alt]="p.nombre" loading="lazy" />
                   } @else {
-                    <div class="mini-noimg">📦</div>
+                    <div class="mini-noimg">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                    </div>
                   }
                 </div>
                 <div class="mini-info">
@@ -212,7 +234,7 @@
       </section>
     }
 
-    <!-- COMPRAR POR CATEGORÍA (todas) -->
+    <!-- COMPRAR POR CATEGORÍA -->
     @if (categorias.length > 0) {
       <section class="all-cats" id="categorias">
         <div class="section-head">
@@ -221,7 +243,9 @@
         <div class="cats-grid">
           @for (cat of categorias; track cat.id) {
             <button class="cat-tile" (click)="irACategoria(cat.id)">
-              <span class="cat-tile-icon">{{ iconoCategoria(cat.nombre) }}</span>
+              <span class="cat-tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </span>
               <span class="cat-tile-name">{{ cat.nombre }}</span>
             </button>
           }
