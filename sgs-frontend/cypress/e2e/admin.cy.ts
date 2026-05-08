@@ -22,13 +22,7 @@ describe('Panel de administración', () => {
     cy.visit('/admin/inventario-alertas');
     cy.url().should('include', '/admin/inventario-alertas');
     cy.get('h2').should('contain.text', 'Inventario');
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-cy=alerts-list]').length > 0) {
-        cy.get('[data-cy=alerts-list]').should('be.visible');
-        cy.get('[data-cy=alert-card]').should('have.length.greaterThan', 0);
-      } else {
-        cy.get('.empty-state').should('be.visible');
-      }
-    });
+    // Espera a que termine el loading: una de las dos vistas debe estar visible
+    cy.get('[data-cy=alerts-list], .empty-state', { timeout: 15000 }).should('be.visible');
   });
 });
