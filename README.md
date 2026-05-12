@@ -456,7 +456,7 @@ Copyright (c) 2026 Sebastián Agudelo
 
 **Desarrollado con ❤️ por**
 
-### Sebastián Agudelo
+### Sebastián Agudelo y Juan Felipe Hurtado
 **Ingeniería de Sistemas y Computación — Universidad del Quindío**
 
 [![GitHub](https://img.shields.io/badge/GitHub-sebastianagudelom-181717?style=for-the-badge&logo=github)](https://github.com/sebastianagudelom)
