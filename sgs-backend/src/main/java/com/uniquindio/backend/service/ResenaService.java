@@ -73,7 +73,7 @@ public class ResenaService {
         validarCompraParaResena(usuario.getId(), productoId);
 
         if (resenaRepository.existsByProductoIdAndUsuarioId(productoId, usuario.getId())) {
-            throw new RuntimeException("Ya registraste una resena para este producto");
+            throw new RuntimeException("Ya registraste una reseña para este producto");
         }
 
         Resena resena = Resena.builder()
@@ -92,10 +92,10 @@ public class ResenaService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Resena resena = resenaRepository.findById(resenaId)
-                .orElseThrow(() -> new RuntimeException("Resena no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Reseña no encontrada"));
 
         if (!resena.getUsuario().getId().equals(usuario.getId())) {
-            throw new RuntimeException("No tienes permiso para modificar esta resena");
+            throw new RuntimeException("No tienes permiso para modificar esta reseña");
         }
 
         resena.setCalificacion(request.calificacion());
@@ -109,13 +109,13 @@ public class ResenaService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Resena resena = resenaRepository.findById(resenaId)
-                .orElseThrow(() -> new RuntimeException("Resena no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Reseña no encontrada"));
 
         boolean esAutor = resena.getUsuario().getId().equals(usuario.getId());
         boolean esAdmin = usuario.getRol() == Rol.ADMIN;
 
         if (!esAutor && !esAdmin) {
-            throw new RuntimeException("No tienes permiso para eliminar esta resena");
+            throw new RuntimeException("No tienes permiso para eliminar esta reseña");
         }
 
         resenaRepository.delete(resena);
@@ -129,7 +129,7 @@ public class ResenaService {
 
     private void validarCompraParaResena(Long usuarioId, Long productoId) {
         if (!tieneCompraVerificada(usuarioId, productoId)) {
-            throw new RuntimeException("Solo puedes resenar productos que ya compraste");
+            throw new RuntimeException("Solo puedes reseñar productos que ya compraste");
         }
     }
 
