@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class SgsBackendApplication {
 
+	/* Main method to run the Spring Boot application */
 	public static void main(String[] args) {
 		SpringApplication.run(SgsBackendApplication.class, args);
 	}
