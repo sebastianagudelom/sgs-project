@@ -14,9 +14,4 @@ public class SgsBackendApplication {
 		System.out.println("SGS Backend Application is running...");
 	}
 
-
-
-
-
-
 }
